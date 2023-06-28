@@ -1,17 +1,10 @@
-﻿using System;
+﻿using SINGLE_STAGE.Entities;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace SINGLE_STAGE
 {
@@ -23,6 +16,47 @@ namespace SINGLE_STAGE
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
+        }
+
+        private void MEVEButtonClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MARTButtonClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MPERButtonClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MAPPButtonClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MTKHButtonClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MTIXButtonClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CREPButtonClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EXITButtonClicked(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }
