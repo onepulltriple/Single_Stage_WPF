@@ -3,13 +3,7 @@ using SINGLE_STAGE.Entities;
 using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace SINGLE_STAGE
 {
@@ -29,19 +23,24 @@ namespace SINGLE_STAGE
             InitializeComponent();
             DataContext = this;
             _context = new();
+
+            ClearFailureMessages();
         }
 
         private void GridLoaded(object sender, RoutedEventArgs e)
         {
             Keyboard.Focus(UI02);
+        }
+
+        private void ClearFailureMessages()
+        {
             LoginFailedMessage.Visibility = Visibility.Hidden;
             FillOutAllFieldsMessage.Visibility = Visibility.Hidden;
         }
 
         private void UI02GotFocus(object sender, RoutedEventArgs e)
         {
-            LoginFailedMessage.Visibility = Visibility.Hidden;
-            FillOutAllFieldsMessage.Visibility = Visibility.Hidden;
+            ClearFailureMessages();
         }
 
         private void UI02KeyDownHandler(object sender, KeyEventArgs e)
@@ -54,8 +53,7 @@ namespace SINGLE_STAGE
 
         private void PB01GotFocus(object sender, RoutedEventArgs e)
         {
-            LoginFailedMessage.Visibility = Visibility.Hidden;
-            FillOutAllFieldsMessage.Visibility = Visibility.Hidden;
+            ClearFailureMessages();
         }
 
         private void PB01KeyDownHandler(object sender, KeyEventArgs e)

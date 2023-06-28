@@ -47,12 +47,11 @@
             </Grid.ColumnDefinitions>
 
             <Label        Grid.Row="0" Grid.Column="0" Name="UI01" Margin="6" VerticalAlignment="Center" Content="Username"/>
-            <TextBox      Grid.Row="0" Grid.Column="1" Name="UI02" Margin="6" VerticalAlignment="Center" Text="{Binding enteredUsername}"
-                          Padding="2,2,0,0" GotFocus="UI02GotFocus" KeyDown="UI02KeyDownHandler"/>
+            <TextBox      Grid.Row="0" Grid.Column="1" Name="UI02" Margin="6" VerticalAlignment="Center" Padding="2,2,0,0" 
+                          GotFocus="UI02GotFocus" KeyDown="UI02KeyDownHandler" Text="{Binding enteredUsername}" />
             <Label        Grid.Row="1" Grid.Column="0" Name="UI03" Margin="6" VerticalAlignment="Center" Content="Password"/>
-            <PasswordBox  Grid.Row="1" Grid.Column="1" Name="PB01" Margin="6" VerticalAlignment="Center" 
+            <PasswordBox  Grid.Row="1" Grid.Column="1" Name="PB01" Margin="6" VerticalAlignment="Center" Padding="2,2,0,0"
                           GotFocus="PB01GotFocus" KeyDown="PB01KeyDownHandler"/>
-
         </Grid>
 
         <!--lower section-->
