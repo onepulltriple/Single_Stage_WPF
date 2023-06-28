@@ -1,0 +1,12 @@
+# ignore object files
+obj/
+
+# ignore binary files
+bin/
+
+# ignore visual studio cache/options directory
+.vs/
+
+# ignore visual studio publishing output
+Publish/
+Properties
