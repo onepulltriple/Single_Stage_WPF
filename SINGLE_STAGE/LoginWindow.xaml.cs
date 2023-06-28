@@ -1,4 +1,5 @@
-﻿using SINGLE_STAGE.Entities;
+﻿using Microsoft.IdentityModel.Tokens;
+using SINGLE_STAGE.Entities;
 using System;
 using System.Linq;
 using System.Windows;
@@ -30,6 +31,41 @@ namespace SINGLE_STAGE
             _context = new();
         }
 
+        private void GridLoaded(object sender, RoutedEventArgs e)
+        {
+            Keyboard.Focus(UI02);
+            LoginFailedMessage.Visibility = Visibility.Hidden;
+            FillOutAllFieldsMessage.Visibility = Visibility.Hidden;
+        }
+
+        private void UI02GotFocus(object sender, RoutedEventArgs e)
+        {
+            LoginFailedMessage.Visibility = Visibility.Hidden;
+            FillOutAllFieldsMessage.Visibility = Visibility.Hidden;
+        }
+
+        private void UI02KeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Tab)
+                Keyboard.Focus(PB01);
+            if (e.Key == Key.Enter)
+                LoginButtonClicked(sender, e);
+        }
+
+        private void PB01GotFocus(object sender, RoutedEventArgs e)
+        {
+            LoginFailedMessage.Visibility = Visibility.Hidden;
+            FillOutAllFieldsMessage.Visibility = Visibility.Hidden;
+        }
+
+        private void PB01KeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Tab)
+                Keyboard.Focus(LoginButton);
+            if (e.Key == Key.Enter)
+                LoginButtonClicked(sender, e);
+        }
+
         private void CancelButtonClicked(object sender, RoutedEventArgs e)
         {
             Environment.Exit(0);
@@ -38,10 +74,10 @@ namespace SINGLE_STAGE
         private void LoginButtonClicked(object sender, RoutedEventArgs e)
         {
             // check that all fields are filled out
-            if (enteredUsername == null ||
-                PB01.Password == null)
+            if (enteredUsername.IsNullOrEmpty() ||
+                PB01.Password.IsNullOrEmpty()   )
             {
-                MessageBox.Show("Please fill out all fields.");
+                FillOutAllFieldsMessage.Visibility = Visibility.Visible;
                 return;
             }
 
@@ -50,7 +86,7 @@ namespace SINGLE_STAGE
 
             if (tempEmployee == null)
             {
-                MessageBox.Show("Invalid credentials.");
+                LoginFailedMessage.Visibility = Visibility.Visible;
                 return;
             }
 
@@ -59,7 +95,7 @@ namespace SINGLE_STAGE
 
             if (!passwordOK)
             {
-                MessageBox.Show("Invalid credentials.");
+                LoginFailedMessage.Visibility = Visibility.Visible;
                 return;
             }
 
