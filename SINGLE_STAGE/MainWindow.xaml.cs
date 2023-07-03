@@ -40,7 +40,9 @@ namespace SINGLE_STAGE
 
         private void MAPPButtonClicked(object sender, RoutedEventArgs e)
         {
-
+            ManageAppearancesWindow MAW = new();
+            MAW.Show();
+            this.Close();
         }
 
         private void MTKHButtonClicked(object sender, RoutedEventArgs e)
