@@ -22,7 +22,7 @@
         </Grid.ColumnDefinitions>
 
         <!--headline-->
-        <Label        Grid.Row="0" Grid.Column="0" Margin="6" VerticalAlignment="Center" FontSize="20" >
+        <Label        Grid.Row="0" Grid.Column="0" Margin="6" VerticalAlignment="Center" FontSize="20" Grid.ColumnSpan="2">
             Single Stage Main Dashboard
         </Label>
 

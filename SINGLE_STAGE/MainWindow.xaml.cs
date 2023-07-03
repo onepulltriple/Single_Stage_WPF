@@ -21,7 +21,9 @@ namespace SINGLE_STAGE
 
         private void MEVEButtonClicked(object sender, RoutedEventArgs e)
         {
-
+            ManageEventsWindow MEW = new();
+            MEW.Show();
+            this.Close();
         }
 
         private void MARTButtonClicked(object sender, RoutedEventArgs e)
