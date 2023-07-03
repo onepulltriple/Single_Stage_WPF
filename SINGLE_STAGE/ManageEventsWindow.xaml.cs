@@ -314,20 +314,20 @@ namespace SINGLE_STAGE
             }
 
 
-            //// block if StartTime is earlier than the SQL database minimum 
-            //if (UserInputValidation.SQLDatabaseChecks.IsLowerEqualThanSQLDatabaseMinimum(TempCavent.StartTime))
-            //{
-            //    MessageBox.Show("Please enter a later start time.");
-            //    return false;
-            //}
+            // block if StartTime is earlier than the SQL database minimum 
+            if (UserInputValidation.SQLDatabaseChecks.IsLowerEqualThanSQLDatabaseMinimum(TempCavent.StartTime))
+            {
+                MessageBox.Show("Please enter a later start time.");
+                return false;
+            }
 
 
-            //// block if EndTime is earlier than the SQL database minimum 
-            //if (UserInputValidation.SQLDatabaseChecks.IsLowerEqualThanSQLDatabaseMinimum(TempCavent.EndTime))
-            //{
-            //    MessageBox.Show("Please enter a later start time.");
-            //    return false;
-            //}
+            // block if EndTime is earlier than the SQL database minimum 
+            if (UserInputValidation.SQLDatabaseChecks.IsLowerEqualThanSQLDatabaseMinimum(TempCavent.EndTime))
+            {
+                MessageBox.Show("Please enter a later start time.");
+                return false;
+            }
 
 
             // check for time conflicts (excluding the event being edited, if applicable)
