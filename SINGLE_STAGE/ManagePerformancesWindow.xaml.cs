@@ -188,6 +188,15 @@ namespace SINGLE_STAGE
             ButtonsInManageMode();
         }
 
+        private void CB01SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // fill in user inputs fields based on the selected event
+            DP01.SelectedDate = SelectedCavent.StartTime;
+            EnteredStartTime = SelectedCavent.StartTime.ToString("HH:mm"); 
+            DP02.SelectedDate = SelectedCavent.EndTime;
+            EnteredEndTime = SelectedCavent.EndTime.ToString("HH:mm");
+        }
+
         private void ButtonsInManageMode()
         {
             CREAButton.IsEnabled = false;
@@ -349,6 +358,19 @@ namespace SINGLE_STAGE
                 return false;
             }
 
+            // block if StartTime occurs before the start of the selected event 
+            if (TempPerformance.StartTime < SelectedCavent.StartTime)
+            {
+                MessageBox.Show("The start time occurs before the start of the selected event. Please adjust the start time.");
+                return false;
+            }
+
+            // block if EndTime occurs after the end of the selected event 
+            if (TempPerformance.EndTime > SelectedCavent.EndTime)
+            {
+                MessageBox.Show("The end time occurs after the end of the selected event. Please adjust the end time.");
+                return false;
+            }
 
             // block if StartTime is earlier than the SQL database minimum 
             if (UserInputValidation.SQLDatabaseChecks.IsLowerEqualThanSQLDatabaseMinimum(TempPerformance.StartTime))
@@ -425,5 +447,6 @@ namespace SINGLE_STAGE
 
             return toFill;
         }
+
     }
 }

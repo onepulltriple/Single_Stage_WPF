@@ -60,22 +60,20 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <Label        Grid.Row="0" Grid.Column="0" Name="UI01" Margin="6" VerticalAlignment="Center" Content="Description"/>
-            <TextBox      Grid.Row="0" Grid.Column="1" Name="UI02" Margin="6" VerticalAlignment="Center" Text="{Binding TempPerformance.Description}"/>
-            <Label        Grid.Row="1" Grid.Column="0" Name="UI03" Margin="6" VerticalAlignment="Center" Content="Start Date"/>
-            <DatePicker   Grid.Row="1" Grid.Column="1" Name="DP01" Margin="6" VerticalAlignment="Center" />
-            <Label        Grid.Row="2" Grid.Column="0" Name="UI05" Margin="6" VerticalAlignment="Center" Content="StartTime"/>
-            <TextBox      Grid.Row="2" Grid.Column="1" Name="UI06" Margin="6" VerticalAlignment="Center" Text="{Binding EnteredStartTime}"/>
-            <Label        Grid.Row="3" Grid.Column="0" Name="UI07" Margin="6" VerticalAlignment="Center" Content="End Date"/>
-            <DatePicker   Grid.Row="3" Grid.Column="1" Name="DP02" Margin="6" VerticalAlignment="Center" />
-            <Label        Grid.Row="4" Grid.Column="0" Name="UI09" Margin="6" VerticalAlignment="Center" Content="End Time"/>
-            <TextBox      Grid.Row="4" Grid.Column="1" Name="UI10" Margin="6" VerticalAlignment="Center" Text="{Binding EnteredEndTime}"/>
-            <Label        Grid.Row="5" Grid.Column="0" Name="UI11" Margin="6" VerticalAlignment="Center" Content="Part of Event:"/>
-            <!--<ComboBox     Grid.Row="5" Grid.Column="1" Name="CB01" Margin="6" VerticalAlignment="Center" 
-                          ItemsSource="{Binding ListOfEvents}" SelectedItem="{Binding SelectedCavent}"/>-->
-            <ComboBox     Grid.Row="5" Grid.Column="1" Name="CB01" Margin="6" VerticalAlignment="Center" 
+            <Label        Grid.Row="0" Grid.Column="0" Name="UI11" Margin="6" VerticalAlignment="Center" Content="Part of Event:"/>
+            <ComboBox     Grid.Row="0" Grid.Column="1" Name="CB01" Margin="6" VerticalAlignment="Center" 
                           ItemsSource="{Binding ListOfEvents}" SelectedItem="{Binding SelectedCavent}"
-                          DisplayMemberPath="Name"/>
+                          DisplayMemberPath="Name" SelectionChanged="CB01SelectionChanged"/>
+            <Label        Grid.Row="1" Grid.Column="0" Name="UI01" Margin="6" VerticalAlignment="Center" Content="Description"/>
+            <TextBox      Grid.Row="1" Grid.Column="1" Name="UI02" Margin="6" VerticalAlignment="Center" Text="{Binding TempPerformance.Description}"/>
+            <Label        Grid.Row="2" Grid.Column="0" Name="UI03" Margin="6" VerticalAlignment="Center" Content="Start Date"/>
+            <DatePicker   Grid.Row="2" Grid.Column="1" Name="DP01" Margin="6" VerticalAlignment="Center" />
+            <Label        Grid.Row="3" Grid.Column="0" Name="UI05" Margin="6" VerticalAlignment="Center" Content="StartTime"/>
+            <TextBox      Grid.Row="3" Grid.Column="1" Name="UI06" Margin="6" VerticalAlignment="Center" Text="{Binding EnteredStartTime}"/>
+            <Label        Grid.Row="4" Grid.Column="0" Name="UI07" Margin="6" VerticalAlignment="Center" Content="End Date"/>
+            <DatePicker   Grid.Row="4" Grid.Column="1" Name="DP02" Margin="6" VerticalAlignment="Center" />
+            <Label        Grid.Row="5" Grid.Column="0" Name="UI09" Margin="6" VerticalAlignment="Center" Content="End Time"/>
+            <TextBox      Grid.Row="5" Grid.Column="1" Name="UI10" Margin="6" VerticalAlignment="Center" Text="{Binding EnteredEndTime}"/>
 
         </Grid>
 
