@@ -64,8 +64,8 @@
             <Label        Grid.Row="1" Grid.Column="0" Name="UI07" Margin="6" VerticalAlignment="Center" Content="Performance"/>
             <ComboBox     Grid.Row="1" Grid.Column="1" Name="CB02" Margin="6" VerticalAlignment="Center" 
                           ItemsSource="{Binding ListOfPerformances}" SelectedItem="{Binding SelectedPerformance}" DisplayMemberPath="Description"/>
-            <Label        Grid.Row="2" Grid.Column="0" Name="UI01" Margin="6" VerticalAlignment="Center" Content="Royalty Up Front"/>
-            <TextBox      Grid.Row="2" Grid.Column="1" Name="UI02" Margin="6" VerticalAlignment="Center" Text="{Binding TempAppearance.RoyaltyUpFront}"/>
+            <Label        Grid.Row="2" Grid.Column="0" Name="UI01" Margin="6" VerticalAlignment="Center" Content="Royalty Advance"/>
+            <TextBox      Grid.Row="2" Grid.Column="1" Name="UI02" Margin="6" VerticalAlignment="Center" Text="{Binding TempAppearance.RoyaltyAdvance}"/>
             <Label        Grid.Row="3" Grid.Column="0" Name="UI03" Margin="6" VerticalAlignment="Center" Content="Royalty At End"/>
             <TextBox      Grid.Row="3" Grid.Column="1" Name="UI04" Margin="6" VerticalAlignment="Center" Text="{Binding TempAppearance.RoyaltyAtEnd}"/>
 

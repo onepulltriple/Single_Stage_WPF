@@ -190,6 +190,9 @@ namespace SINGLE_STAGE
 
         private void CB01SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (CB01.SelectedItem == null)
+                return;
+
             // fill in user inputs fields based on the selected event
             DP01.SelectedDate = SelectedCavent.StartTime;
             EnteredStartTime = SelectedCavent.StartTime.ToString("HH:mm"); 
@@ -254,8 +257,13 @@ namespace SINGLE_STAGE
         private void SAVEButtonClicked(object sender, RoutedEventArgs e)
         {
             bool ChecksWerePassed = PerformChecksOnUserInput();
-            TempPerformance.Cavent = SelectedCavent;
-            TempPerformance.CaventId = SelectedCavent.Id;
+
+            // if checks were passed, transfer properties of CB01 to the temp performance
+            if (ChecksWerePassed)
+            {
+                TempPerformance.Cavent = SelectedCavent;
+                TempPerformance.CaventId = SelectedCavent.Id;
+            }
 
             // when editing an existing event
             if (ChecksWerePassed && SelectedPerformance != null)
@@ -309,7 +317,7 @@ namespace SINGLE_STAGE
                 EnteredEndTime == null ||
                 CB01.SelectedItem == null)
             {
-                MessageBox.Show("Please fill out all fields.");
+                MessageBox.Show("Please fill out all fields and ensure an event is selected.");
                 return false;
             }
 

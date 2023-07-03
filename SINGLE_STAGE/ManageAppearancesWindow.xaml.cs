@@ -294,7 +294,21 @@ namespace SINGLE_STAGE
                 CB01.SelectedItem == null ||
                 CB02.SelectedItem == null)
             {
-                MessageBox.Show("Please fill out all fields.");
+                MessageBox.Show("Please fill out all fields and make sure the royalty payments are decimal numbers.");
+                return false;
+            }
+
+            // check for time conflicts (excluding the appearance being edited, if applicable)
+            // check that artist will not be booked a second time for the same appearance
+            Appearance DoubleBooking = TempAppearance.Performance.Appearances
+                .FirstOrDefault(appearance =>              
+                appearance.Artist == TempAppearance.Artist &&
+                appearance != TempAppearance
+                );
+
+            if (DoubleBooking != null)
+            {
+                MessageBox.Show("The selected artist is already booked for this appearance.");
                 return false;
             }
 
