@@ -10,44 +10,44 @@ using System.Windows.Controls;
 namespace SINGLE_STAGE
 {
     /// <summary>
-    /// Interaction logic for ManageEventsWindow.xaml
+    /// Interaction logic for ManagePerformancesWindow.xaml
     /// </summary>
-    public partial class ManageEventsWindow : Window, INotifyPropertyChanged
+    public partial class ManagePerformancesWindow : Window, INotifyPropertyChanged
     {
         readonly SingleStageContext _context;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private List<Cavent> _listOfCavents;
-        public List<Cavent> ListOfCavents
+        private List<Performance> _listOfPerformances;
+        public List<Performance> ListOfPerformances
         {
-            get { return _listOfCavents; }
+            get { return _listOfPerformances; }
             set
             {
-                _listOfCavents = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfCavents)));
+                _listOfPerformances = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfPerformances)));
             }
         }
 
-        private Cavent _selectedCavent;
-        public Cavent SelectedCavent
+        private Performance _selectedPerformance;
+        public Performance SelectedPerformance
         {
-            get { return _selectedCavent; }
+            get { return _selectedPerformance; }
             set
             {
-                _selectedCavent = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedCavent)));
+                _selectedPerformance = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedPerformance)));
             }
         }
 
-        private Cavent _tempCavent;
-        public Cavent TempCavent
+        private Performance _tempPerformance;
+        public Performance TempPerformance
         {
-            get { return _tempCavent; }
+            get { return _tempPerformance; }
             set
             {
-                _tempCavent = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TempCavent)));
+                _tempPerformance = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TempPerformance)));
             }
         }
 
@@ -73,25 +73,56 @@ namespace SINGLE_STAGE
             }
         }
 
-        public ManageEventsWindow()
+        private List<Cavent> _listOfEvents;
+        public List<Cavent> ListOfEvents
+        {
+            get { return _listOfEvents; }
+            set
+            {
+                _listOfEvents = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfEvents)));
+            }
+        }
+
+        private Cavent _selectedCavent;
+        public Cavent SelectedCavent
+        {
+            get { return _selectedCavent; }
+            set
+            {
+                _selectedCavent = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedCavent)));
+            }
+        }
+
+        public ManagePerformancesWindow()
         {
             InitializeComponent();
             DataContext = this;
             _context = new();
 
+            LoadAllPerformances();
             LoadAllCavents();
         }
 
-        private void LoadAllCavents()
+        private void LoadAllPerformances()
         {
-            ListOfCavents = new(_context.Cavents
-                .OrderBy(cavent => cavent.StartTime)
+            ListOfPerformances = new(_context.Performances
+                .OrderBy(Performance => Performance.StartTime)
                 .ToArray()
                 );
 
             ResetButtons();
 
             CloseUserInputFields();
+        }
+
+        private void LoadAllCavents()
+        {
+            ListOfEvents = new(_context.Cavents
+                .OrderBy(cavent => cavent.StartTime)
+                .ToArray()
+                );
         }
 
         private void CloseUserInputFields()
@@ -107,7 +138,7 @@ namespace SINGLE_STAGE
             UI09.IsEnabled = false;
             UI10.IsEnabled = false;
             UI11.IsEnabled = false;
-            UI12.IsEnabled = false;
+            CB01.IsEnabled = false;
         }
 
         private void OpenUserInputFields()
@@ -123,7 +154,7 @@ namespace SINGLE_STAGE
             UI09.IsEnabled = true;
             UI10.IsEnabled = true;
             UI11.IsEnabled = true;
-            UI12.IsEnabled = true;
+            CB01.IsEnabled = true;
         }
 
         private void ResetButtons()
@@ -180,76 +211,80 @@ namespace SINGLE_STAGE
             ButtonsInEditMode();
             OpenUserInputFields();
 
-            TempCavent = new();
+            TempPerformance = new();
 
-            // clear user inputs fields which are not bound to the temp event
+            // clear user inputs fields which are not bound to the temp performance
             DP01.SelectedDate = DateTime.Today;
             EnteredStartTime = null;
             DP02.SelectedDate = DateTime.Today;
             EnteredEndTime = null;
+            CB01.SelectedItem = null;
         }
 
         private void EDITButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (SelectedCavent == null)
+            if (SelectedPerformance == null)
             {
-                MessageBox.Show("Please select an event.");
+                MessageBox.Show("Please select a performance.");
                 return;
             }
 
             ButtonsInEditMode();
             OpenUserInputFields();
 
-            TempCavent = TransferProperties(new Cavent(), SelectedCavent);
+            TempPerformance = TransferProperties(new Performance(), SelectedPerformance);
 
-            // fill out user inputs fields which are not bound to the temp event
-            DP01.SelectedDate = TempCavent.StartTime;
-            EnteredStartTime = TempCavent.StartTime.ToString("HH:mm");
-            DP02.SelectedDate = TempCavent.EndTime;
-            EnteredEndTime = TempCavent.EndTime.ToString("HH:mm");
+            // fill out user inputs fields which are not bound to the temp performance
+            DP01.SelectedDate = TempPerformance.StartTime;
+            EnteredStartTime = TempPerformance.StartTime.ToString("HH:mm");
+            DP02.SelectedDate = TempPerformance.EndTime;
+            EnteredEndTime = TempPerformance.EndTime.ToString("HH:mm");
+            CB01.SelectedItem = TempPerformance.Cavent;
         }
 
         private void SAVEButtonClicked(object sender, RoutedEventArgs e)
         {
             bool ChecksWerePassed = PerformChecksOnUserInput();
+            TempPerformance.Cavent = SelectedCavent;
+            TempPerformance.CaventId = SelectedCavent.Id;
 
             // when editing an existing event
-            if (ChecksWerePassed && SelectedCavent != null)
+            if (ChecksWerePassed && SelectedPerformance != null)
             {
-                SelectedCavent = TransferProperties(SelectedCavent, TempCavent);
-                _context.Update(SelectedCavent);
+                SelectedPerformance = TransferProperties(SelectedPerformance, TempPerformance);
+                _context.Update(SelectedPerformance);
                 _context.SaveChanges();
-                LoadAllCavents();
+                LoadAllPerformances();
                 return;
             }
 
             // when editing a new event
             if (ChecksWerePassed)
             {
-                _context.Add(TempCavent);
+                _context.Add(TempPerformance);
                 _context.SaveChanges();
-                LoadAllCavents();
+                LoadAllPerformances();
                 return;
             }
         }
 
         private void DELEButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (SelectedCavent == null)
+            if (SelectedPerformance == null)
             {
-                MessageBox.Show("Please select an event.");
+                MessageBox.Show("Please select a performance.");
                 return;
             }
 
             MessageBoxResult answer = MessageBoxResult.No;
 
-            answer = MessageBox.Show("Are you sure you want to delete the selected event?", "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+            answer = MessageBox.Show("Are you sure you want to delete the selected performance?", "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
 
             if (answer == MessageBoxResult.Yes)
             {
-                _context.Remove(SelectedCavent);
+                _context.Remove(SelectedPerformance);
                 _context.SaveChanges();
-                LoadAllCavents();
+                LoadAllPerformances();
             }
 
             ResetButtons();
@@ -258,14 +293,14 @@ namespace SINGLE_STAGE
         private bool PerformChecksOnUserInput()
         {
             // block if any field is empty
-            if (TempCavent.Name == null ||
+            if (TempPerformance.Description == null ||
                 DP01.SelectedDate == null ||
                 EnteredStartTime == null ||
                 DP02.SelectedDate == null ||
                 EnteredEndTime == null ||
-                TempCavent.TicketPrice == null)
+                CB01.SelectedItem == null)
             {
-                MessageBox.Show("Please fill out all fields and make sure the ticket price is a decimal number.");
+                MessageBox.Show("Please fill out all fields.");
                 return false;
             }
 
@@ -288,7 +323,7 @@ namespace SINGLE_STAGE
             }
 
             // assemble StartTime
-            TempCavent.StartTime = new DateTime(
+            TempPerformance.StartTime = new DateTime(
                 DP01.SelectedDate.Value.Year,
                 DP01.SelectedDate.Value.Month,
                 DP01.SelectedDate.Value.Day,
@@ -298,7 +333,7 @@ namespace SINGLE_STAGE
                 );
 
             // assemble EndTime
-            TempCavent.EndTime = new DateTime(
+            TempPerformance.EndTime = new DateTime(
                 DP02.SelectedDate.Value.Year,
                 DP02.SelectedDate.Value.Month,
                 DP02.SelectedDate.Value.Day,
@@ -308,7 +343,7 @@ namespace SINGLE_STAGE
                 );
 
             // block if StartTime occurs after EndTime
-            if (TempCavent.StartTime >= TempCavent.EndTime)
+            if (TempPerformance.StartTime >= TempPerformance.EndTime)
             {
                 MessageBox.Show("Please ensure that the start time occurs before the end time.");
                 return false;
@@ -316,7 +351,7 @@ namespace SINGLE_STAGE
 
 
             // block if StartTime is earlier than the SQL database minimum 
-            if (UserInputValidation.SQLDatabaseChecks.IsLowerEqualThanSQLDatabaseMinimum(TempCavent.StartTime))
+            if (UserInputValidation.SQLDatabaseChecks.IsLowerEqualThanSQLDatabaseMinimum(TempPerformance.StartTime))
             {
                 MessageBox.Show("Please enter a later start time.");
                 return false;
@@ -324,53 +359,53 @@ namespace SINGLE_STAGE
 
 
             // block if EndTime is earlier than the SQL database minimum 
-            if (UserInputValidation.SQLDatabaseChecks.IsLowerEqualThanSQLDatabaseMinimum(TempCavent.EndTime))
+            if (UserInputValidation.SQLDatabaseChecks.IsLowerEqualThanSQLDatabaseMinimum(TempPerformance.EndTime))
             {
                 MessageBox.Show("Please enter a later start time.");
                 return false;
             }
 
 
-            // check for time conflicts (excluding the event being edited, if applicable)
-            // check that StartTime does not occur during an existing event 
-            Cavent StartTimeConflict = _context.Cavents
-                .FirstOrDefault(cavent =>
-                TempCavent.StartTime >= cavent.StartTime &&
-                TempCavent.StartTime <= cavent.EndTime &&
-                TempCavent != cavent
+            // check for time conflicts (excluding the performance being edited, if applicable)
+            // check that StartTime does not occur during an existing performance 
+            Performance StartTimeConflict = _context.Performances
+                .FirstOrDefault(Performance =>
+                TempPerformance.StartTime >= Performance.StartTime &&
+                TempPerformance.StartTime <= Performance.EndTime &&
+                TempPerformance != Performance
                 );
 
             if (StartTimeConflict != null)
             {
-                MessageBox.Show("The start time conflicts with an existing event. Please adjust the start time.");
+                MessageBox.Show("The start time conflicts with an existing performance. Please adjust the start time.");
                 return false;
             }
 
-            // check that EndTime does not occur during an existing event 
-            Cavent EndTimeConflict = _context.Cavents
-                .FirstOrDefault(cavent =>
-                TempCavent.EndTime >= cavent.StartTime &&
-                TempCavent.EndTime <= cavent.EndTime &&
-                TempCavent != cavent
+            // check that EndTime does not occur during an existing performance 
+            Performance EndTimeConflict = _context.Performances
+                .FirstOrDefault(Performance =>
+                TempPerformance.EndTime >= Performance.StartTime &&
+                TempPerformance.EndTime <= Performance.EndTime &&
+                TempPerformance != Performance
                 );
 
             if (EndTimeConflict != null)
             {
-                MessageBox.Show("The end time conflicts with an existing event. Please adjust the end time.");
+                MessageBox.Show("The end time conflicts with an existing performance. Please adjust the end time.");
                 return false;
             }
 
-            // check that StartTime and EndTime do not occur before and after an existing event, respectively 
-            Cavent EventOverlappedConflict = _context.Cavents
-                .FirstOrDefault(cavent =>
-                TempCavent.StartTime <= cavent.StartTime &&
-                TempCavent.EndTime >= cavent.EndTime &&
-                TempCavent != cavent
+            // check that StartTime and EndTime do not occur before and after an existing performance, respectively 
+            Performance EventOverlappedConflict = _context.Performances
+                .FirstOrDefault(Performance =>
+                TempPerformance.StartTime <= Performance.StartTime &&
+                TempPerformance.EndTime >= Performance.EndTime &&
+                TempPerformance != Performance
                 );
 
             if (EventOverlappedConflict != null)
             {
-                MessageBox.Show("The entered times encompass an existing event. Please adjust the start and/or end times.");
+                MessageBox.Show("The entered times encompass an existing performance. Please adjust the start and/or end times.");
                 return false;
             }
 
@@ -378,14 +413,15 @@ namespace SINGLE_STAGE
             return true;
         }
 
-        private Cavent TransferProperties(Cavent toFill, Cavent origin)
+        private Performance TransferProperties(Performance toFill, Performance origin)
         {
             toFill.Id = origin.Id;
-            toFill.Name = origin.Name;
+            toFill.Description = origin.Description;
             toFill.StartTime = origin.StartTime;
             toFill.EndTime = origin.EndTime;
-            toFill.TicketPrice = origin.TicketPrice;
-            toFill.SoldOut = origin.SoldOut;
+            toFill.CaventId = origin.CaventId;
+
+            toFill.Cavent = origin.Cavent;
 
             return toFill;
         }

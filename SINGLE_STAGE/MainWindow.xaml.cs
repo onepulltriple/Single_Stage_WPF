@@ -33,7 +33,9 @@ namespace SINGLE_STAGE
 
         private void MPERButtonClicked(object sender, RoutedEventArgs e)
         {
-
+            ManagePerformancesWindow MPW = new();
+            MPW.Show();
+            this.Close();
         }
 
         private void MAPPButtonClicked(object sender, RoutedEventArgs e)
