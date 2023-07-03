@@ -241,8 +241,15 @@ namespace SINGLE_STAGE
         private void SAVEButtonClicked(object sender, RoutedEventArgs e)
         {
             bool ChecksWerePassed = PerformChecksOnUserInput();
-            TempAppearance.Artist = SelectedArtist;
-            TempAppearance.Performance = SelectedPerformance;
+
+            // if checks were passed, transfer properties of CB01 to the temp appearance
+            if (ChecksWerePassed)
+            {
+                TempAppearance.Artist = SelectedArtist;
+                TempAppearance.ArtistId = SelectedArtist.Id;
+                TempAppearance.Performance = SelectedPerformance;
+                TempAppearance.PerformanceId = SelectedPerformance.Id;
+            }
 
             // when editing an existing Appearance
             if (ChecksWerePassed && SelectedAppearance != null)
@@ -300,10 +307,10 @@ namespace SINGLE_STAGE
 
             // check for time conflicts (excluding the appearance being edited, if applicable)
             // check that artist will not be booked a second time for the same appearance
-            Appearance DoubleBooking = TempAppearance.Performance.Appearances
+            Appearance DoubleBooking = SelectedPerformance.Appearances
                 .FirstOrDefault(appearance =>              
-                appearance.Artist == TempAppearance.Artist &&
-                appearance != TempAppearance
+                appearance.Artist == SelectedArtist &&
+                appearance.Id != TempAppearance.Id
                 );
 
             if (DoubleBooking != null)

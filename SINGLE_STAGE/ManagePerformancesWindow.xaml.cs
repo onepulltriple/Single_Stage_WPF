@@ -153,8 +153,8 @@ namespace SINGLE_STAGE
             DP02.IsEnabled = true;
             UI09.IsEnabled = true;
             UI10.IsEnabled = true;
-            UI11.IsEnabled = true;
-            CB01.IsEnabled = true;
+            //UI11.IsEnabled = true;
+            //CB01.IsEnabled = true;
         }
 
         private void ResetButtons()
@@ -190,10 +190,14 @@ namespace SINGLE_STAGE
 
         private void CB01SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // when the selected item is switched to null, do nothing further
             if (CB01.SelectedItem == null)
                 return;
 
-            // fill in user inputs fields based on the selected event
+            // open remaining user input fields, since an event has been selected
+            OpenUserInputFields();
+
+            // fill in user input fields based on the selected event
             DP01.SelectedDate = SelectedCavent.StartTime;
             EnteredStartTime = SelectedCavent.StartTime.ToString("HH:mm"); 
             DP02.SelectedDate = SelectedCavent.EndTime;
@@ -221,16 +225,19 @@ namespace SINGLE_STAGE
         private void CREAButtonClicked(object sender, RoutedEventArgs e)
         {
             ButtonsInEditMode();
-            OpenUserInputFields();
+
+            // open combo box only to select an event first
+            CB01.SelectedItem = null;
+            UI11.IsEnabled = true;
+            CB01.IsEnabled = true;
 
             TempPerformance = new();
 
             // clear user inputs fields which are not bound to the temp performance
-            DP01.SelectedDate = DateTime.Today;
+            DP01.SelectedDate = null;
             EnteredStartTime = null;
-            DP02.SelectedDate = DateTime.Today;
+            DP02.SelectedDate = null;
             EnteredEndTime = null;
-            CB01.SelectedItem = null;
         }
 
         private void EDITButtonClicked(object sender, RoutedEventArgs e)
@@ -242,6 +249,8 @@ namespace SINGLE_STAGE
             }
 
             ButtonsInEditMode();
+            UI11.IsEnabled = true;
+            CB01.IsEnabled = true;
             OpenUserInputFields();
 
             TempPerformance = TransferProperties(new Performance(), SelectedPerformance);
@@ -402,7 +411,7 @@ namespace SINGLE_STAGE
                 .FirstOrDefault(Performance =>
                 TempPerformance.StartTime >= Performance.StartTime &&
                 TempPerformance.StartTime <= Performance.EndTime &&
-                TempPerformance != Performance
+                TempPerformance.Id != Performance.Id
                 );
 
             if (StartTimeConflict != null)
@@ -416,7 +425,7 @@ namespace SINGLE_STAGE
                 .FirstOrDefault(Performance =>
                 TempPerformance.EndTime >= Performance.StartTime &&
                 TempPerformance.EndTime <= Performance.EndTime &&
-                TempPerformance != Performance
+                TempPerformance.Id != Performance.Id
                 );
 
             if (EndTimeConflict != null)
@@ -430,7 +439,7 @@ namespace SINGLE_STAGE
                 .FirstOrDefault(Performance =>
                 TempPerformance.StartTime <= Performance.StartTime &&
                 TempPerformance.EndTime >= Performance.EndTime &&
-                TempPerformance != Performance
+                TempPerformance.Id != Performance.Id
                 );
 
             if (EventOverlappedConflict != null)
@@ -455,6 +464,5 @@ namespace SINGLE_STAGE
 
             return toFill;
         }
-
     }
 }

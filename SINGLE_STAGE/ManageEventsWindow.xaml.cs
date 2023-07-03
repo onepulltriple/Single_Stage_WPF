@@ -337,7 +337,7 @@ namespace SINGLE_STAGE
                 .FirstOrDefault(cavent =>
                 TempCavent.StartTime >= cavent.StartTime &&
                 TempCavent.StartTime <= cavent.EndTime &&
-                TempCavent != cavent
+                TempCavent.Id != cavent.Id
                 );
 
             if (StartTimeConflict != null)
@@ -351,7 +351,7 @@ namespace SINGLE_STAGE
                 .FirstOrDefault(cavent =>
                 TempCavent.EndTime >= cavent.StartTime &&
                 TempCavent.EndTime <= cavent.EndTime &&
-                TempCavent != cavent
+                TempCavent.Id != cavent.Id
                 );
 
             if (EndTimeConflict != null)
@@ -365,7 +365,7 @@ namespace SINGLE_STAGE
                 .FirstOrDefault(cavent =>
                 TempCavent.StartTime <= cavent.StartTime &&
                 TempCavent.EndTime >= cavent.EndTime &&
-                TempCavent != cavent
+                TempCavent.Id != cavent.Id
                 );
 
             if (EventOverlappedConflict != null)
