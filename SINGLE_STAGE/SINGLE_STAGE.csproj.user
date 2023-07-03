@@ -8,6 +8,9 @@
     <Compile Update="ManageAppearancesWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="ManageArtistsWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="ManageEventsWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -20,6 +23,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="ManageAppearancesWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ManageArtistsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="ManageEventsWindow.xaml">

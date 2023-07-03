@@ -106,22 +106,6 @@ namespace SINGLE_STAGE
             LoadAllArtists();
         }
 
-        private void LoadAllArtists()
-        {
-            ListOfArtists = new(_context.Artists
-                .OrderBy(artist => artist.Name)
-                .ToArray()
-                );
-        }
-
-        private void LoadAllPerformances()
-        {
-            ListOfPerformances = new(_context.Performances
-                .OrderBy(performance => performance.StartTime)
-                .ToArray()
-                );
-        }
-
         private void LoadAllAppearances()
         {
             ListOfAppearances = new(_context.Appearances
@@ -132,6 +116,22 @@ namespace SINGLE_STAGE
             ResetButtons();
 
             CloseUserInputFields();
+        }
+
+        private void LoadAllPerformances()
+        {
+            ListOfPerformances = new(_context.Performances
+                .OrderBy(performance => performance.StartTime)
+                .ToArray()
+                );
+        }
+
+        private void LoadAllArtists()
+        {
+            ListOfArtists = new(_context.Artists
+                .OrderBy(artist => artist.Name)
+                .ToArray()
+                );
         }
 
         private void CloseUserInputFields()

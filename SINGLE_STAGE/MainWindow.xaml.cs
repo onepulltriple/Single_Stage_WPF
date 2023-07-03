@@ -28,7 +28,9 @@ namespace SINGLE_STAGE
 
         private void MARTButtonClicked(object sender, RoutedEventArgs e)
         {
-
+            ManageArtistsWindow MAW = new();
+            MAW.Show();
+            this.Close();
         }
 
         private void MPERButtonClicked(object sender, RoutedEventArgs e)
