@@ -1,4 +1,6 @@
-﻿using SINGLE_STAGE.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SINGLE_STAGE.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,14 +75,14 @@ namespace SINGLE_STAGE
             }
         }
 
-        private List<Cavent> _listOfEvents;
-        public List<Cavent> ListOfEvents
+        private List<Cavent> _listOfCavents;
+        public List<Cavent> ListOfCavents
         {
-            get { return _listOfEvents; }
+            get { return _listOfCavents; }
             set
             {
-                _listOfEvents = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfEvents)));
+                _listOfCavents = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfCavents)));
             }
         }
 
@@ -108,7 +110,8 @@ namespace SINGLE_STAGE
         private void LoadAllPerformances()
         {
             ListOfPerformances = new(_context.Performances
-                .OrderBy(Performance => Performance.StartTime)
+                .OrderBy(performance => performance.StartTime)
+                .Include(performance => performance.Appearances)
                 .ToArray()
                 );
 
@@ -119,7 +122,7 @@ namespace SINGLE_STAGE
 
         private void LoadAllCavents()
         {
-            ListOfEvents = new(_context.Cavents
+            ListOfCavents = new(_context.Cavents
                 .OrderBy(cavent => cavent.StartTime)
                 .ToArray()
                 );
@@ -270,7 +273,7 @@ namespace SINGLE_STAGE
             // if checks were passed, transfer properties of CB01 to the temp performance
             if (ChecksWerePassed)
             {
-                TempPerformance.Cavent = SelectedCavent;
+                //TempPerformance.Cavent = SelectedCavent;
                 TempPerformance.CaventId = SelectedCavent.Id;
             }
 
@@ -308,21 +311,39 @@ namespace SINGLE_STAGE
 
             if (answer == MessageBoxResult.Yes)
             {
-                // check if the event contains performances
+                // check if the performance contains appearances
                 List<Appearance> AppearancesContainedByPerformance = new(
                     SelectedPerformance.Appearances.ToArray()
                     );
 
-                // check if those performances contain appearances
+                MessageBoxResult answer02 = MessageBoxResult.No;
 
-                // delete contained appearances
+                // ask follow up question if the event is not empty
+                if (!AppearancesContainedByPerformance.IsNullOrEmpty())
+                {
+                    answer02 = MessageBox.Show("The selected performance already has appearances booked. " +
+                        "Deleting this performance will delete all booked appearances occurring within this performance. " +
+                        "Are you sure you want to delete the selected performance?",
+                        "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                }
 
-                // delete contained performances
+                if (answer02 == MessageBoxResult.No)
+                {
+                    MessageBox.Show("Performance deletion aborted. No changes have been made.");
+                    return;
+                }
 
-                // proceed with event deletion
-                _context.Remove(SelectedPerformance);
-                _context.SaveChanges();
-                LoadAllPerformances();
+                if (answer02 == MessageBoxResult.Yes)
+                {
+
+
+                    // delete contained appearances
+
+                    // proceed with performance deletion
+                    _context.Remove(SelectedPerformance);
+                    _context.SaveChanges();
+                    LoadAllPerformances();
+                }
             }
 
             ResetButtons();
@@ -472,7 +493,7 @@ namespace SINGLE_STAGE
             toFill.EndTime = origin.EndTime;
             toFill.CaventId = origin.CaventId;
 
-            toFill.Cavent = origin.Cavent;
+            //toFill.Cavent = origin.Cavent;
 
             return toFill;
         }

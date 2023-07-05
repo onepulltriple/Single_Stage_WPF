@@ -1,4 +1,6 @@
-﻿using SINGLE_STAGE.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SINGLE_STAGE.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,6 +75,28 @@ namespace SINGLE_STAGE
             }
         }
 
+        private List<Performance> _listOfPerformances;
+        public List<Performance> ListOfPerformances
+        {
+            get { return _listOfPerformances; }
+            set
+            {
+                _listOfPerformances = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfPerformances)));
+            }
+        }
+
+        private List<Appearance> _listOfAppearances;
+        public List<Appearance> ListOfAppearances
+        {
+            get { return _listOfAppearances; }
+            set
+            {
+                _listOfAppearances = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfAppearances)));
+            }
+        }
+
         public ManageEventsWindow()
         {
             InitializeComponent();
@@ -80,18 +104,38 @@ namespace SINGLE_STAGE
             _context = new();
 
             LoadAllCavents();
+            LoadAllPerformances();
+            LoadAllAppearances();
         }
 
         private void LoadAllCavents()
         {
             ListOfCavents = new(_context.Cavents
                 .OrderBy(cavent => cavent.StartTime)
+                .Include(cavent => cavent.Performances)
                 .ToArray()
                 );
 
             ResetButtons();
 
             CloseUserInputFields();
+        }
+
+        private void LoadAllPerformances()
+        {
+            ListOfPerformances = new(_context.Performances
+                .OrderBy(performance => performance.StartTime)
+                .Include(performance => performance.Appearances)
+                .ToArray()
+                );
+        }
+
+        private void LoadAllAppearances()
+        {
+            ListOfAppearances = new(_context.Appearances
+                .OrderBy(Appearance => Appearance.Performance.StartTime)
+                .ToArray()
+                );
         }
 
         private void CloseUserInputFields()
@@ -241,30 +285,61 @@ namespace SINGLE_STAGE
                 return;
             }
 
-            MessageBoxResult answer = MessageBoxResult.No;
+            MessageBoxResult answer01 = MessageBoxResult.No;
 
-            answer = MessageBox.Show("Are you sure you want to delete the selected event?", "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+            answer01 = MessageBox.Show("Are you sure you want to delete the selected event?", "Confirm Event deletion.", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (answer == MessageBoxResult.Yes)
+            if (answer01 == MessageBoxResult.Yes)
             {
                 // check if the event contains performances
-                List<Performance> PerformancesContainedByEvent = new(
-                    _context.Performances
-                    .Where(performance => 
-                    performance.Cavent.Id == SelectedCavent.Id)
-                    .ToArray()
+                List<Performance> PerformancesContainedByCavent = new(
+                    SelectedCavent.Performances.ToArray()
                     );
 
                 // check if those performances contain appearances
+                //List<Appearance> AppearancesContainedByContainedPerformances = new(
+                //    PerformancesContainedByCavent.Select(performance =>
+                //    performance.AppearanceId)
+                //    .ToArray()
+                //    );
 
-                // delete contained appearances
+                MessageBoxResult answer02 = MessageBoxResult.No;
 
-                // delete contained performances
+                // ask follow up question if the event is not empty
+                if (!PerformancesContainedByCavent.IsNullOrEmpty())
+                {
 
-                // proceed with event deletion
-                _context.Remove(SelectedCavent);
-                _context.SaveChanges();
-                LoadAllCavents();
+                    answer02 = MessageBox.Show("The selected event already has performances scheduled within it, " +
+                        "and those performances may already have appearances booked. " +
+                        "Deleting this event will delete all scheduled performances and all booked appearances occurring within this event. " +
+                        "Are you sure you want to delete the selected event?", 
+                        "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                }
+
+                if (answer02 == MessageBoxResult.No)
+                {
+                    MessageBox.Show("Event deletion aborted. No changes have been made.");
+                    return;
+                }
+
+                if (answer02 == MessageBoxResult.Yes)
+                {
+                    // delete contained appearances
+                    //foreach (var performance in PerformancesContainedByCavent)
+                    //{
+                    //    foreach (var appearance in ListOfAppearances)
+                    //    {
+                    //        _context.Remove(appearance);
+                    //    }
+                    //}
+
+                    // delete contained performances
+
+                    // proceed with event deletion
+                    _context.Remove(SelectedCavent);
+                    _context.SaveChanges();
+                    LoadAllCavents();
+                }
             }
 
             ResetButtons();

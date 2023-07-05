@@ -1,18 +1,11 @@
-﻿using SINGLE_STAGE.Entities;
-using System;
+﻿using Microsoft.EntityFrameworkCore;
+using SINGLE_STAGE.Entities;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace SINGLE_STAGE
 {
@@ -71,6 +64,7 @@ namespace SINGLE_STAGE
         {
             ListOfArtists = new(_context.Artists
                 .OrderBy(artist => artist.Name)
+                .Include(artist => artist.Appearances)
                 .ToArray()
                 );
 
@@ -207,6 +201,18 @@ namespace SINGLE_STAGE
 
             if (answer == MessageBoxResult.Yes)
             {
+                // check if the event contains performances
+                List<Appearance> AppearancesBookedByArtist = new(
+                    SelectedArtist.Appearances.ToArray()
+                    );
+
+                // check if those performances contain appearances
+
+                // delete contained appearances
+
+                // delete contained performances
+
+                // proceed with event deletion
                 _context.Remove(SelectedArtist);
                 _context.SaveChanges();
                 LoadAllArtists();

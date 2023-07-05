@@ -245,9 +245,9 @@ namespace SINGLE_STAGE
             // if checks were passed, transfer properties of CB01 to the temp appearance
             if (ChecksWerePassed)
             {
-                TempAppearance.Artist = SelectedArtist;
+                //TempAppearance.Artist = SelectedArtist;
                 TempAppearance.ArtistId = SelectedArtist.Id;
-                TempAppearance.Performance = SelectedPerformance;
+                //TempAppearance.Performance = SelectedPerformance;
                 TempAppearance.PerformanceId = SelectedPerformance.Id;
             }
 
