@@ -247,6 +247,21 @@ namespace SINGLE_STAGE
 
             if (answer == MessageBoxResult.Yes)
             {
+                // check if the event contains performances
+                List<Performance> PerformancesContainedByEvent = new(
+                    _context.Performances
+                    .Where(performance => 
+                    performance.Cavent.Id == SelectedCavent.Id)
+                    .ToArray()
+                    );
+
+                // check if those performances contain appearances
+
+                // delete contained appearances
+
+                // delete contained performances
+
+                // proceed with event deletion
                 _context.Remove(SelectedCavent);
                 _context.SaveChanges();
                 LoadAllCavents();

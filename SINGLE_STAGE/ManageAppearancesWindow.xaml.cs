@@ -315,7 +315,7 @@ namespace SINGLE_STAGE
 
             if (DoubleBooking != null)
             {
-                MessageBox.Show("The selected artist is already booked for this appearance.");
+                MessageBox.Show("The selected artist is already booked to appear in this performance.");
                 return false;
             }
 
@@ -331,8 +331,8 @@ namespace SINGLE_STAGE
             toFill.ArtistId = origin.ArtistId;
             toFill.PerformanceId = origin.PerformanceId;
 
-            toFill.Artist = origin.Artist;
-            toFill.Performance = origin.Performance;
+            //toFill.Artist = origin.Artist;
+            //toFill.Performance = origin.Performance;
 
             return toFill;
         }

@@ -308,6 +308,18 @@ namespace SINGLE_STAGE
 
             if (answer == MessageBoxResult.Yes)
             {
+                // check if the event contains performances
+                List<Appearance> AppearancesContainedByPerformance = new(
+                    SelectedPerformance.Appearances.ToArray()
+                    );
+
+                // check if those performances contain appearances
+
+                // delete contained appearances
+
+                // delete contained performances
+
+                // proceed with event deletion
                 _context.Remove(SelectedPerformance);
                 _context.SaveChanges();
                 LoadAllPerformances();
