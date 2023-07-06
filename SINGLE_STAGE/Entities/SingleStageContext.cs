@@ -41,7 +41,7 @@ public partial class SingleStageContext : DbContext
     {
         modelBuilder.Entity<Appearance>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__APPEARAN__3213E83F96CD1D6B");
+            entity.HasKey(e => e.Id).HasName("PK__APPEARAN__3213E83F734B2777");
 
             entity.ToTable("APPEARANCES");
 
@@ -53,38 +53,38 @@ public partial class SingleStageContext : DbContext
 
             entity.HasOne(d => d.Artist).WithMany(p => p.Appearances)
                 .HasForeignKey(d => d.ArtistId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__APPEARANC__Artis__300424B4");
+                .HasConstraintName("FK_ParentArtistChildAppearances");
 
             entity.HasOne(d => d.Performance).WithMany(p => p.Appearances)
                 .HasForeignKey(d => d.PerformanceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__APPEARANC__Perfo__30F848ED");
+                .HasConstraintName("FK_ParentPerformanceChildAppearances");
         });
 
         modelBuilder.Entity<Artist>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ARTISTS__3213E83FA7E5AE5D");
+            entity.HasKey(e => e.Id).HasName("PK__ARTISTS__3213E83FFD7F261D");
 
             entity.ToTable("ARTISTS");
 
-            entity.HasIndex(e => e.Name, "UQ__ARTISTS__737584F649B2E282").IsUnique();
+            entity.HasIndex(e => e.Name, "UQ__ARTISTS__737584F6048FEA1D").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name)
+                .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
         });
 
         modelBuilder.Entity<Cavent>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CAVENTS__3213E83F001EC8F3");
+            entity.HasKey(e => e.Id).HasName("PK__CAVENTS__3213E83F0AB66E34");
 
             entity.ToTable("CAVENTS");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.EndTime).HasColumnType("datetime");
             entity.Property(e => e.Name)
+                .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.StartTime).HasColumnType("datetime");
@@ -93,30 +93,33 @@ public partial class SingleStageContext : DbContext
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__EMPLOYEE__3213E83F1D1723FC");
+            entity.HasKey(e => e.Id).HasName("PK__EMPLOYEE__3213E83F5127ADBB");
 
             entity.ToTable("EMPLOYEES");
 
-            entity.HasIndex(e => e.Username, "UQ__EMPLOYEE__536C85E4111B8B2F").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__EMPLOYEE__536C85E4438826F7").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Password)
+                .IsRequired()
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Username)
+                .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
         });
 
         modelBuilder.Entity<Performance>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PERFORMA__3213E83F049B7103");
+            entity.HasKey(e => e.Id).HasName("PK__PERFORMA__3213E83F7D1E2D6F");
 
             entity.ToTable("PERFORMANCES");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CaventId).HasColumnName("Cavent_id");
             entity.Property(e => e.Description)
+                .IsRequired()
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.EndTime).HasColumnType("datetime");
@@ -124,13 +127,12 @@ public partial class SingleStageContext : DbContext
 
             entity.HasOne(d => d.Cavent).WithMany(p => p.Performances)
                 .HasForeignKey(d => d.CaventId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__PERFORMAN__Caven__2D27B809");
+                .HasConstraintName("FK_ParentCaventChildPerformances");
         });
 
         modelBuilder.Entity<Seatnumber>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__SEATNUMB__3213E83FB28AEAE6");
+            entity.HasKey(e => e.Id).HasName("PK__SEATNUMB__3213E83F64A0E4CA");
 
             entity.ToTable("SEATNUMBERS");
 
@@ -139,12 +141,13 @@ public partial class SingleStageContext : DbContext
 
         modelBuilder.Entity<Seatrow>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__SEATROWS__3213E83F80AAEC61");
+            entity.HasKey(e => e.Id).HasName("PK__SEATROWS__3213E83FC4F222DB");
 
             entity.ToTable("SEATROWS");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Row)
+                .IsRequired()
                 .HasMaxLength(1)
                 .IsUnicode(false)
                 .IsFixedLength();
@@ -152,7 +155,7 @@ public partial class SingleStageContext : DbContext
 
         modelBuilder.Entity<Ticket>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TICKETS__3213E83FB8A99C6B");
+            entity.HasKey(e => e.Id).HasName("PK__TICKETS__3213E83F54B9C497");
 
             entity.ToTable("TICKETS");
 
@@ -164,38 +167,36 @@ public partial class SingleStageContext : DbContext
 
             entity.HasOne(d => d.Cavent).WithMany(p => p.Tickets)
                 .HasForeignKey(d => d.CaventId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TICKETS__Cavent___3B75D760");
+                .HasConstraintName("FK_ParentCaventChildTickets");
 
             entity.HasOne(d => d.SeatNumber).WithMany(p => p.Tickets)
                 .HasForeignKey(d => d.SeatNumberId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TICKETS__SeatNum__3E52440B");
+                .HasConstraintName("FK_ParentSeatNumberChildTickets");
 
             entity.HasOne(d => d.SeatRow).WithMany(p => p.Tickets)
                 .HasForeignKey(d => d.SeatRowId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TICKETS__SeatRow__3D5E1FD2");
+                .HasConstraintName("FK_ParentSeatRowChildTickets");
 
             entity.HasOne(d => d.Ticketholder).WithMany(p => p.Tickets)
                 .HasForeignKey(d => d.TicketholderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TICKETS__Ticketh__3C69FB99");
+                .HasConstraintName("FK_ParentTicketholderChildTickets");
         });
 
         modelBuilder.Entity<Ticketholder>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TICKETHO__3213E83F0BDDB66A");
+            entity.HasKey(e => e.Id).HasName("PK__TICKETHO__3213E83F7DA4B9F7");
 
             entity.ToTable("TICKETHOLDERS");
 
-            entity.HasIndex(e => e.EmailAddress, "UQ__TICKETHO__49A147409E98667C").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__TICKETHO__A9D10534E5D879A5").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.EmailAddress)
+            entity.Property(e => e.Email)
+                .IsRequired()
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.Name)
+                .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
         });

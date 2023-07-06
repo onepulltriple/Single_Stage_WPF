@@ -7,7 +7,7 @@ public partial class Performance
 {
     public int Id { get; set; }
 
-    public string Description { get; set; } = null!;
+    public string Description { get; set; }
 
     public DateTime StartTime { get; set; }
 
@@ -17,5 +17,5 @@ public partial class Performance
 
     public virtual ICollection<Appearance> Appearances { get; set; } = new List<Appearance>();
 
-    public virtual Cavent Cavent { get; set; } = null!;
+    public virtual Cavent Cavent { get; set; }
 }
