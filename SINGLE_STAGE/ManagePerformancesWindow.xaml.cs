@@ -316,6 +316,9 @@ namespace SINGLE_STAGE
                     SelectedPerformance.Appearances.ToArray()
                     );
 
+                // https://stackoverflow.com/questions/5520418/entity-framework-code-first-delete-with-cascade
+                // https://stackoverflow.com/questions/5448702/cascading-deletes-with-entity-framework-related-entities-deleted-by-ef/5448843#5448843
+
                 MessageBoxResult answer02 = MessageBoxResult.No;
 
                 // ask follow up question if the event is not empty
