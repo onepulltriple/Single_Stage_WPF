@@ -86,14 +86,14 @@ namespace SINGLE_STAGE
             }
         }
 
-        private List<Appearance> _listOfAppearances;
-        public List<Appearance> ListOfAppearances
+        private List<Ticket> _listOfTickets;
+        public List<Ticket> ListOfTickets
         {
-            get { return _listOfAppearances; }
+            get { return _listOfTickets; }
             set
             {
-                _listOfAppearances = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfAppearances)));
+                _listOfTickets = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfTickets)));
             }
         }
 
@@ -105,7 +105,7 @@ namespace SINGLE_STAGE
 
             LoadAllCavents();
             LoadAllPerformances();
-            LoadAllAppearances();
+            LoadAllTickets();
         }
 
         private void LoadAllCavents()
@@ -130,10 +130,9 @@ namespace SINGLE_STAGE
                 );
         }
 
-        private void LoadAllAppearances()
+        private void LoadAllTickets()
         {
-            ListOfAppearances = new(_context.Appearances
-                .OrderBy(Appearance => Appearance.Performance.StartTime)
+            ListOfTickets = new(_context.Tickets
                 .ToArray()
                 );
         }
@@ -286,56 +285,55 @@ namespace SINGLE_STAGE
             }
 
             MessageBoxResult answer01 = MessageBoxResult.No;
+            MessageBoxResult answer02 = MessageBoxResult.No;
 
-            answer01 = MessageBox.Show("Are you sure you want to delete the selected event?", "Confirm Event deletion.", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            answer01 = MessageBox.Show(
+                "Are you sure you want to delete the selected event?", 
+                "Confirm event deletion.", 
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (answer01 == MessageBoxResult.Yes)
             {
                 // check if the event contains performances
-                List<Performance> PerformancesContainedByCavent = new(
+                List<Performance> PerformancesScheduledForCavent = new(
                     SelectedCavent.Performances.ToArray()
                     );
 
-                // check if those performances contain appearances
-                //List<Appearance> AppearancesContainedByContainedPerformances = new(
-                //    PerformancesContainedByCavent.Select(performance =>
-                //    performance.AppearanceId)
-                //    .ToArray()
-                //    );
+                // check if the event contains tickets
+                List<Ticket> TicketsBookedForCavent = new(
+                    SelectedCavent.Tickets.ToArray()
+                    );
 
-                MessageBoxResult answer02 = MessageBoxResult.No;
-
-                // ask follow up question if the event is not empty
-                if (!PerformancesContainedByCavent.IsNullOrEmpty())
+                // if the event contains performances            - or -
+                // if the event has tickets already booked
+                if (!PerformancesScheduledForCavent.IsNullOrEmpty() ||
+                    !TicketsBookedForCavent.IsNullOrEmpty())
                 {
+                    int countOfPerformances = PerformancesScheduledForCavent.Count();
+                    int countOfTickets = TicketsBookedForCavent.Count();
+                    string messageToUser = 
+                        $"The selected event has\n" +
+                        $"{countOfPerformances} performances scheduled and\n" +
+                        $"{countOfTickets} tickets booked.\n" +
+                        $"Deleting this event will delete all of its scheduled performances " +
+                        $"and all of its booked tickets.\n" +
+                        $"Are you sure you want to delete the selected event?";
 
-                    answer02 = MessageBox.Show("The selected event already has performances scheduled within it, " +
-                        "and those performances may already have appearances booked. " +
-                        "Deleting this event will delete all scheduled performances and all booked appearances occurring within this event. " +
-                        "Are you sure you want to delete the selected event?", 
-                        "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                    // ask follow up question
+                    answer02 = MessageBox.Show(messageToUser, 
+                        "If you do this, you will get what you deserve.", 
+                        MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                }
+                else
+                {
+                    // event is empty and can be deleted without follow up questions asked
+                    answer02 = MessageBoxResult.Yes;
                 }
 
-                if (answer02 == MessageBoxResult.No)
+                if (answer01 == MessageBoxResult.Yes &&
+                    answer02 == MessageBoxResult.Yes)
                 {
-                    MessageBox.Show("Event deletion aborted. No changes have been made.");
-                    return;
-                }
-
-                if (answer02 == MessageBoxResult.Yes)
-                {
-                    // delete contained appearances
-                    //foreach (var performance in PerformancesContainedByCavent)
-                    //{
-                    //    foreach (var appearance in ListOfAppearances)
-                    //    {
-                    //        _context.Remove(appearance);
-                    //    }
-                    //}
-
-                    // delete contained performances
-
-                    // proceed with event deletion
+                    // proceed with event deletion (cascading delete in SQL is used)
                     _context.Remove(SelectedCavent);
                     _context.SaveChanges();
                     LoadAllCavents();
