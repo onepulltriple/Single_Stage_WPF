@@ -15,11 +15,11 @@ public partial class Ticket
 
     public int SeatNumberId { get; set; }
 
-    public virtual Cavent Cavent { get; set; } = null!;
+    public virtual Cavent Cavent { get; set; }
 
-    public virtual Seatnumber SeatNumber { get; set; } = null!;
+    public virtual Seatnumber SeatNumber { get; set; }
 
-    public virtual Seatrow SeatRow { get; set; } = null!;
+    public virtual Seatrow SeatRow { get; set; }
 
-    public virtual Ticketholder Ticketholder { get; set; } = null!;
+    public virtual Ticketholder Ticketholder { get; set; }
 }

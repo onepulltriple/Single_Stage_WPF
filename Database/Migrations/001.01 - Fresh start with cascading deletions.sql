@@ -1,0 +1,124 @@
+USE MASTER
+GO
+
+DROP DATABASE SINGLE_STAGE
+CREATE DATABASE SINGLE_STAGE
+GO
+
+USE SINGLE_STAGE
+GO
+
+CREATE TABLE EMPLOYEES (
+	id int PRIMARY KEY IDENTITY(1,1),
+	Username varchar(50) NOT NULL UNIQUE,
+	Password varchar(255) NOT NULL
+	)
+
+SELECT * FROM EMPLOYEES
+
+
+CREATE TABLE ARTISTS (
+	id int PRIMARY KEY IDENTITY(1,1),
+	Name varchar(50) NOT NULL UNIQUE
+	)
+
+SELECT * FROM ARTISTS
+
+
+CREATE TABLE CAVENTS (
+	id int PRIMARY KEY IDENTITY(1,1),
+	Name varchar(50) NOT NULL,
+	StartTime datetime NOT NULL,
+	EndTime datetime NOT NULL,
+	TicketPrice decimal,
+	SoldOut bit NOT NULL DEFAULT 0
+	)
+
+SELECT * FROM CAVENTS
+
+
+CREATE TABLE PERFORMANCES (
+	id int PRIMARY KEY IDENTITY(1,1),
+	Description varchar(100) NOT NULL,
+	StartTime datetime NOT NULL,
+	EndTime datetime NOT NULL,
+	Cavent_id int NOT NULL,
+	CONSTRAINT FK_ParentCaventChildPerformances
+		FOREIGN KEY (Cavent_id) 
+			REFERENCES CAVENTS(id)
+			ON DELETE CASCADE
+	)
+
+SELECT * FROM PERFORMANCES
+
+
+CREATE TABLE APPEARANCES (
+	id int PRIMARY KEY IDENTITY(1,1),
+	RoyaltyAdvance decimal,
+	RoyaltyAtEnd decimal,
+	Artist_id int NOT NULL,
+	CONSTRAINT FK_ParentArtistChildAppearances
+		FOREIGN KEY (Artist_id) 
+			REFERENCES ARTISTS(id)
+			ON DELETE CASCADE,
+	Performance_id int NOT NULL,
+	CONSTRAINT FK_ParentPerformanceChildAppearances
+		FOREIGN KEY (Performance_id) 
+			REFERENCES PERFORMANCES(id)
+			ON DELETE CASCADE
+	)
+
+SELECT * FROM APPEARANCES
+
+
+CREATE TABLE SEATROWS (
+	id int PRIMARY KEY IDENTITY(1,1),
+	Row char NOT NULL
+	)
+
+SELECT * FROM SEATROWS
+
+
+CREATE TABLE SEATNUMBERS (
+	id int PRIMARY KEY IDENTITY(1,1),
+	Number int NOT NULL
+	)
+
+SELECT * FROM SEATNUMBERS
+
+
+CREATE TABLE TICKETHOLDERS (
+	id int PRIMARY KEY IDENTITY(1,1),
+	Name varchar(50) NOT NULL,
+	Email varchar(100) NOT NULL UNIQUE,
+	Discount bit NOT NULL DEFAULT 0
+	)
+
+SELECT * FROM TICKETHOLDERS
+
+
+CREATE TABLE TICKETS (
+	id int PRIMARY KEY IDENTITY(1,1),
+	Cavent_id int NOT NULL,
+	CONSTRAINT FK_ParentCaventChildTickets
+		FOREIGN KEY (Cavent_id) 
+			REFERENCES CAVENTS(id)
+			ON DELETE CASCADE,
+	Ticketholder_id int NOT NULL,
+	CONSTRAINT FK_ParentTicketholderChildTickets
+		FOREIGN KEY (Ticketholder_id) 
+			REFERENCES TICKETHOLDERS(id)
+			ON DELETE CASCADE,
+	SeatRow_id int NOT NULL,
+	CONSTRAINT FK_ParentSeatRowChildTickets
+		FOREIGN KEY (SeatRow_id) 
+			REFERENCES SEATROWS(id)
+			ON DELETE CASCADE,
+	SeatNumber_id int NOT NULL,
+	CONSTRAINT FK_ParentSeatNumberChildTickets
+		FOREIGN KEY (SeatNumber_id) 
+			REFERENCES SEATNUMBERS(id)
+			ON DELETE CASCADE
+	)
+
+SELECT * FROM TICKETS

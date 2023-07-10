@@ -1,18 +1,12 @@
-﻿using SINGLE_STAGE.Entities;
-using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SINGLE_STAGE.Entities;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace SINGLE_STAGE
 {
@@ -71,6 +65,7 @@ namespace SINGLE_STAGE
         {
             ListOfArtists = new(_context.Artists
                 .OrderBy(artist => artist.Name)
+                .Include(artist => artist.Appearances)
                 .ToArray()
                 );
 
@@ -201,15 +196,51 @@ namespace SINGLE_STAGE
                 return;
             }
 
-            MessageBoxResult answer = MessageBoxResult.No;
+            MessageBoxResult answer01 = MessageBoxResult.No;
+            MessageBoxResult answer02 = MessageBoxResult.No;
 
-            answer = MessageBox.Show("Are you sure you want to delete the selected artist?", "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+            answer01 = MessageBox.Show(
+                "Are you sure you want to delete the selected artist?",
+                "Confirm artist deletion.",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (answer == MessageBoxResult.Yes)
+            if (answer01 == MessageBoxResult.Yes)
             {
-                _context.Remove(SelectedArtist);
-                _context.SaveChanges();
-                LoadAllArtists();
+                // check if the artist has booked appearances
+                List<Appearance> AppearancesBookedByArtist = new(
+                    SelectedArtist.Appearances.ToArray()
+                    );
+
+                // if the artist has booked appearances
+                if (!AppearancesBookedByArtist.IsNullOrEmpty())
+                {
+                    int countOfAppearances = AppearancesBookedByArtist.Count();
+
+                    string messageToUser =
+                        $"The selected artist has\n" +
+                        $"{countOfAppearances} appearances booked.\n" +
+                        $"Deleting this artist will delete all of their booked appearances.\n" +
+                        $"Are you sure you want to delete the selected artist?";
+
+                    // ask follow up question
+                    answer02 = MessageBox.Show(messageToUser,
+                        "If you do this, you will get what you deserve.",
+                        MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                }
+                else
+                {
+                    // artist has no bookings and can be deleted without follow up questions asked
+                    answer02 = MessageBoxResult.Yes;
+                }
+
+                if (answer01 == MessageBoxResult.Yes &&
+                    answer02 == MessageBoxResult.Yes)
+                {
+                    // proceed with artist deletion (cascading delete in SQL is used)
+                    _context.Remove(SelectedArtist);
+                    _context.SaveChanges();
+                    LoadAllArtists();
+                }
             }
 
             ResetButtons();

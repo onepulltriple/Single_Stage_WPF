@@ -15,7 +15,7 @@ public partial class Appearance
 
     public int PerformanceId { get; set; }
 
-    public virtual Artist Artist { get; set; } = null!;
+    public virtual Artist Artist { get; set; }
 
-    public virtual Performance Performance { get; set; } = null!;
+    public virtual Performance Performance { get; set; }
 }

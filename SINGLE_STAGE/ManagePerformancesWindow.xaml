@@ -62,7 +62,7 @@
 
             <Label        Grid.Row="0" Grid.Column="0" Name="UI11" Margin="6" VerticalAlignment="Center" Content="Part of Event:"/>
             <ComboBox     Grid.Row="0" Grid.Column="1" Name="CB01" Margin="6" VerticalAlignment="Center" 
-                          ItemsSource="{Binding ListOfEvents}" SelectedItem="{Binding SelectedCavent}"
+                          ItemsSource="{Binding ListOfCavents}" SelectedItem="{Binding SelectedCavent}"
                           DisplayMemberPath="Name" SelectionChanged="CB01SelectionChanged"/>
             <Label        Grid.Row="1" Grid.Column="0" Name="UI01" Margin="6" VerticalAlignment="Center" Content="Description"/>
             <TextBox      Grid.Row="1" Grid.Column="1" Name="UI02" Margin="6" VerticalAlignment="Center" Text="{Binding TempPerformance.Description}"/>

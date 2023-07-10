@@ -1,4 +1,6 @@
-﻿using SINGLE_STAGE.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SINGLE_STAGE.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,14 +75,14 @@ namespace SINGLE_STAGE
             }
         }
 
-        private List<Cavent> _listOfEvents;
-        public List<Cavent> ListOfEvents
+        private List<Cavent> _listOfCavents;
+        public List<Cavent> ListOfCavents
         {
-            get { return _listOfEvents; }
+            get { return _listOfCavents; }
             set
             {
-                _listOfEvents = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfEvents)));
+                _listOfCavents = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfCavents)));
             }
         }
 
@@ -108,7 +110,8 @@ namespace SINGLE_STAGE
         private void LoadAllPerformances()
         {
             ListOfPerformances = new(_context.Performances
-                .OrderBy(Performance => Performance.StartTime)
+                .OrderBy(performance => performance.StartTime)
+                .Include(performance => performance.Appearances)
                 .ToArray()
                 );
 
@@ -119,7 +122,7 @@ namespace SINGLE_STAGE
 
         private void LoadAllCavents()
         {
-            ListOfEvents = new(_context.Cavents
+            ListOfCavents = new(_context.Cavents
                 .OrderBy(cavent => cavent.StartTime)
                 .ToArray()
                 );
@@ -270,7 +273,7 @@ namespace SINGLE_STAGE
             // if checks were passed, transfer properties of CB01 to the temp performance
             if (ChecksWerePassed)
             {
-                TempPerformance.Cavent = SelectedCavent;
+                //TempPerformance.Cavent = SelectedCavent;
                 TempPerformance.CaventId = SelectedCavent.Id;
             }
 
@@ -302,15 +305,51 @@ namespace SINGLE_STAGE
                 return;
             }
 
-            MessageBoxResult answer = MessageBoxResult.No;
+            MessageBoxResult answer01 = MessageBoxResult.No;
+            MessageBoxResult answer02 = MessageBoxResult.No;
 
-            answer = MessageBox.Show("Are you sure you want to delete the selected performance?", "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+            answer01 = MessageBox.Show(
+                "Are you sure you want to delete the selected performance?",
+                "Confirm performance deletion.",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (answer == MessageBoxResult.Yes)
+            if (answer01 == MessageBoxResult.Yes)
             {
-                _context.Remove(SelectedPerformance);
-                _context.SaveChanges();
-                LoadAllPerformances();
+                // check if the performance contains appearances
+                List<Appearance> AppearancesBookedForPerformance = new(
+                    SelectedPerformance.Appearances.ToArray()
+                    );
+
+                // if the performance contains appearances
+                if (!AppearancesBookedForPerformance.IsNullOrEmpty())
+                {
+                    int countOfAppearances = AppearancesBookedForPerformance.Count();
+                    
+                    string messageToUser =
+                        $"The selected performance has\n" +
+                        $"{countOfAppearances} appearances booked.\n" +
+                        $"Deleting this performance will delete all of its booked appearances.\n" +
+                        $"Are you sure you want to delete the selected performance?";
+
+                    // ask follow up question
+                    answer02 = MessageBox.Show(messageToUser,
+                        "If you do this, you will get what you deserve.",
+                        MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                }
+                else
+                {
+                    // performance is empty and can be deleted without follow up questions asked
+                    answer02 = MessageBoxResult.Yes;
+                }
+
+                if (answer01 == MessageBoxResult.Yes &&
+                    answer02 == MessageBoxResult.Yes)
+                {
+                    // proceed with performance deletion (cascading delete in SQL is used)
+                    _context.Remove(SelectedPerformance);
+                    _context.SaveChanges();
+                    LoadAllPerformances();
+                }
             }
 
             ResetButtons();
@@ -460,7 +499,7 @@ namespace SINGLE_STAGE
             toFill.EndTime = origin.EndTime;
             toFill.CaventId = origin.CaventId;
 
-            toFill.Cavent = origin.Cavent;
+            //toFill.Cavent = origin.Cavent;
 
             return toFill;
         }

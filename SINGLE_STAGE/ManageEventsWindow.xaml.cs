@@ -1,4 +1,6 @@
-﻿using SINGLE_STAGE.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SINGLE_STAGE.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -75,6 +77,28 @@ namespace SINGLE_STAGE
             }
         }
 
+        private List<Performance> _listOfPerformances;
+        public List<Performance> ListOfPerformances
+        {
+            get { return _listOfPerformances; }
+            set
+            {
+                _listOfPerformances = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfPerformances)));
+            }
+        }
+
+        private List<Ticket> _listOfTickets;
+        public List<Ticket> ListOfTickets
+        {
+            get { return _listOfTickets; }
+            set
+            {
+                _listOfTickets = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListOfTickets)));
+            }
+        }
+
         #endregion
 
         public ManageEventsWindow()
@@ -84,18 +108,38 @@ namespace SINGLE_STAGE
             _context = new();
 
             LoadAllCavents();
+            LoadAllPerformances();
+            LoadAllTickets();
         }
 
         private void LoadAllCavents()
         {
             ListOfCavents = new(_context.Cavents
                 .OrderBy(cavent => cavent.StartTime)
+                .Include(cavent => cavent.Performances)
+                .Include(cavent => cavent.Tickets)
                 .ToArray()
                 );
 
             ResetButtons();
 
             CloseUserInputFields();
+        }
+
+        private void LoadAllPerformances()
+        {
+            ListOfPerformances = new(_context.Performances
+                .OrderBy(performance => performance.StartTime)
+                .Include(performance => performance.Appearances)
+                .ToArray()
+                );
+        }
+
+        private void LoadAllTickets()
+        {
+            ListOfTickets = new(_context.Tickets
+                .ToArray()
+                );
         }
 
         private void CloseUserInputFields()
@@ -261,15 +305,61 @@ namespace SINGLE_STAGE
                 return;
             }
 
-            MessageBoxResult answer = MessageBoxResult.No;
+            MessageBoxResult answer01 = MessageBoxResult.No;
+            MessageBoxResult answer02 = MessageBoxResult.No;
 
-            answer = MessageBox.Show("Are you sure you want to delete the selected event?", "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+            answer01 = MessageBox.Show(
+                "Are you sure you want to delete the selected event?", 
+                "Confirm event deletion.", 
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (answer == MessageBoxResult.Yes)
+            if (answer01 == MessageBoxResult.Yes)
             {
-                _context.Remove(SelectedCavent);
-                _context.SaveChanges();
-                LoadAllCavents();
+                // check if the event contains performances
+                List<Performance> PerformancesScheduledForCavent = new(
+                    SelectedCavent.Performances.ToArray()
+                    );
+
+                // check if the event contains tickets
+                List<Ticket> TicketsBookedForCavent = new(
+                    SelectedCavent.Tickets.ToArray()
+                    );
+
+                // if the event contains performances            - or -
+                // if the event has tickets already booked
+                if (!PerformancesScheduledForCavent.IsNullOrEmpty() ||
+                    !TicketsBookedForCavent.IsNullOrEmpty())
+                {
+                    int countOfPerformances = PerformancesScheduledForCavent.Count();
+                    int countOfTickets = TicketsBookedForCavent.Count();
+
+                    string messageToUser = 
+                        $"The selected event has\n" +
+                        $"{countOfPerformances} performances scheduled and\n" +
+                        $"{countOfTickets} tickets booked.\n" +
+                        $"Deleting this event will delete all of its scheduled performances " +
+                        $"and all of its booked tickets.\n" +
+                        $"Are you sure you want to delete the selected event?";
+
+                    // ask follow up question
+                    answer02 = MessageBox.Show(messageToUser, 
+                        "If you do this, you will get what you deserve.", 
+                        MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                }
+                else
+                {
+                    // event is empty and can be deleted without follow up questions asked
+                    answer02 = MessageBoxResult.Yes;
+                }
+
+                if (answer01 == MessageBoxResult.Yes &&
+                    answer02 == MessageBoxResult.Yes)
+                {
+                    // proceed with event deletion (cascading delete in SQL is used)
+                    _context.Remove(SelectedCavent);
+                    _context.SaveChanges();
+                    LoadAllCavents();
+                }
             }
 
             ResetButtons();

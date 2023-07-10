@@ -245,9 +245,9 @@ namespace SINGLE_STAGE
             // if checks were passed, transfer properties of CB01 to the temp appearance
             if (ChecksWerePassed)
             {
-                TempAppearance.Artist = SelectedArtist;
+                //TempAppearance.Artist = SelectedArtist;
                 TempAppearance.ArtistId = SelectedArtist.Id;
-                TempAppearance.Performance = SelectedPerformance;
+                //TempAppearance.Performance = SelectedPerformance;
                 TempAppearance.PerformanceId = SelectedPerformance.Id;
             }
 
@@ -315,7 +315,7 @@ namespace SINGLE_STAGE
 
             if (DoubleBooking != null)
             {
-                MessageBox.Show("The selected artist is already booked for this appearance.");
+                MessageBox.Show("The selected artist is already booked to appear in this performance.");
                 return false;
             }
 
@@ -331,8 +331,8 @@ namespace SINGLE_STAGE
             toFill.ArtistId = origin.ArtistId;
             toFill.PerformanceId = origin.PerformanceId;
 
-            toFill.Artist = origin.Artist;
-            toFill.Performance = origin.Performance;
+            //toFill.Artist = origin.Artist;
+            //toFill.Performance = origin.Performance;
 
             return toFill;
         }

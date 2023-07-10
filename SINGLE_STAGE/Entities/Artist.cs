@@ -7,7 +7,7 @@ public partial class Artist
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Name { get; set; }
 
     public virtual ICollection<Appearance> Appearances { get; set; } = new List<Appearance>();
 }

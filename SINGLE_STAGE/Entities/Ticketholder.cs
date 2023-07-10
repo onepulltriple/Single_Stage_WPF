@@ -7,9 +7,9 @@ public partial class Ticketholder
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Name { get; set; }
 
-    public string EmailAddress { get; set; } = null!;
+    public string Email { get; set; }
 
     public bool Discount { get; set; }
 

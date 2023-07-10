@@ -7,7 +7,7 @@ public partial class Cavent
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Name { get; set; }
 
     public DateTime StartTime { get; set; }
 
