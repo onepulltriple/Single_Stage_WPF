@@ -305,44 +305,47 @@ namespace SINGLE_STAGE
                 return;
             }
 
-            MessageBoxResult answer = MessageBoxResult.No;
+            MessageBoxResult answer01 = MessageBoxResult.No;
+            MessageBoxResult answer02 = MessageBoxResult.No;
 
-            answer = MessageBox.Show("Are you sure you want to delete the selected performance?", "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+            answer01 = MessageBox.Show(
+                "Are you sure you want to delete the selected performance?",
+                "Confirm performance deletion.",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (answer == MessageBoxResult.Yes)
+            if (answer01 == MessageBoxResult.Yes)
             {
                 // check if the performance contains appearances
-                List<Appearance> AppearancesContainedByPerformance = new(
+                List<Appearance> AppearancesBookedForPerformance = new(
                     SelectedPerformance.Appearances.ToArray()
                     );
 
-                // https://stackoverflow.com/questions/5520418/entity-framework-code-first-delete-with-cascade
-                // https://stackoverflow.com/questions/5448702/cascading-deletes-with-entity-framework-related-entities-deleted-by-ef/5448843#5448843
-
-                MessageBoxResult answer02 = MessageBoxResult.No;
-
-                // ask follow up question if the event is not empty
-                if (!AppearancesContainedByPerformance.IsNullOrEmpty())
+                // if the performance contains appearances
+                if (!AppearancesBookedForPerformance.IsNullOrEmpty())
                 {
-                    answer02 = MessageBox.Show("The selected performance already has appearances booked. " +
-                        "Deleting this performance will delete all booked appearances occurring within this performance. " +
-                        "Are you sure you want to delete the selected performance?",
-                        "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                    int countOfAppearances = AppearancesBookedForPerformance.Count();
+                    
+                    string messageToUser =
+                        $"The selected performance has\n" +
+                        $"{countOfAppearances} appearances booked.\n" +
+                        $"Deleting this performance will delete all of its booked appearances.\n" +
+                        $"Are you sure you want to delete the selected performance?";
+
+                    // ask follow up question
+                    answer02 = MessageBox.Show(messageToUser,
+                        "If you do this, you will get what you deserve.",
+                        MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                }
+                else
+                {
+                    // performance is empty and can be deleted without follow up questions asked
+                    answer02 = MessageBoxResult.Yes;
                 }
 
-                if (answer02 == MessageBoxResult.No)
+                if (answer01 == MessageBoxResult.Yes &&
+                    answer02 == MessageBoxResult.Yes)
                 {
-                    MessageBox.Show("Performance deletion aborted. No changes have been made.");
-                    return;
-                }
-
-                if (answer02 == MessageBoxResult.Yes)
-                {
-
-
-                    // delete contained appearances
-
-                    // proceed with performance deletion
+                    // proceed with performance deletion (cascading delete in SQL is used)
                     _context.Remove(SelectedPerformance);
                     _context.SaveChanges();
                     LoadAllPerformances();

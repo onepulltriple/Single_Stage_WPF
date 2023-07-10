@@ -113,6 +113,7 @@ namespace SINGLE_STAGE
             ListOfCavents = new(_context.Cavents
                 .OrderBy(cavent => cavent.StartTime)
                 .Include(cavent => cavent.Performances)
+                .Include(cavent => cavent.Tickets)
                 .ToArray()
                 );
 
@@ -311,6 +312,7 @@ namespace SINGLE_STAGE
                 {
                     int countOfPerformances = PerformancesScheduledForCavent.Count();
                     int countOfTickets = TicketsBookedForCavent.Count();
+
                     string messageToUser = 
                         $"The selected event has\n" +
                         $"{countOfPerformances} performances scheduled and\n" +
