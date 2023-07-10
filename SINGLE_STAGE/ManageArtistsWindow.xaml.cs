@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SINGLE_STAGE.Entities;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -195,27 +196,51 @@ namespace SINGLE_STAGE
                 return;
             }
 
-            MessageBoxResult answer = MessageBoxResult.No;
+            MessageBoxResult answer01 = MessageBoxResult.No;
+            MessageBoxResult answer02 = MessageBoxResult.No;
 
-            answer = MessageBox.Show("Are you sure you want to delete the selected artist?", "If you do this, you will get what you deserve.", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+            answer01 = MessageBox.Show(
+                "Are you sure you want to delete the selected artist?",
+                "Confirm artist deletion.",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (answer == MessageBoxResult.Yes)
+            if (answer01 == MessageBoxResult.Yes)
             {
-                // check if the event contains performances
+                // check if the artist has booked appearances
                 List<Appearance> AppearancesBookedByArtist = new(
                     SelectedArtist.Appearances.ToArray()
                     );
 
-                // check if those performances contain appearances
+                // if the artist has booked appearances
+                if (!AppearancesBookedByArtist.IsNullOrEmpty())
+                {
+                    int countOfAppearances = AppearancesBookedByArtist.Count();
 
-                // delete contained appearances
+                    string messageToUser =
+                        $"The selected artist has\n" +
+                        $"{countOfAppearances} appearances booked.\n" +
+                        $"Deleting this artist will delete all of their booked appearances.\n" +
+                        $"Are you sure you want to delete the selected artist?";
 
-                // delete contained performances
+                    // ask follow up question
+                    answer02 = MessageBox.Show(messageToUser,
+                        "If you do this, you will get what you deserve.",
+                        MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                }
+                else
+                {
+                    // artist has no bookings and can be deleted without follow up questions asked
+                    answer02 = MessageBoxResult.Yes;
+                }
 
-                // proceed with event deletion
-                _context.Remove(SelectedArtist);
-                _context.SaveChanges();
-                LoadAllArtists();
+                if (answer01 == MessageBoxResult.Yes &&
+                    answer02 == MessageBoxResult.Yes)
+                {
+                    // proceed with artist deletion (cascading delete in SQL is used)
+                    _context.Remove(SelectedArtist);
+                    _context.SaveChanges();
+                    LoadAllArtists();
+                }
             }
 
             ResetButtons();
