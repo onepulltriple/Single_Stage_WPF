@@ -14,6 +14,8 @@ namespace SINGLE_STAGE
     /// </summary>
     public partial class ManageEventsWindow : Window, INotifyPropertyChanged
     {
+        #region Class Members
+
         readonly SingleStageContext _context;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -73,6 +75,8 @@ namespace SINGLE_STAGE
             }
         }
 
+        #endregion
+
         public ManageEventsWindow()
         {
             InitializeComponent();
@@ -131,6 +135,9 @@ namespace SINGLE_STAGE
             DG01.UnselectAll();
             DG01.IsEnabled = true;
 
+            BACKButton.Visibility = Visibility.Visible;
+            CANCButton.Visibility = Visibility.Hidden;
+
             CREAButton.IsEnabled = true;
             EDITButton.IsEnabled = false;
             SAVEButton.IsEnabled = false;
@@ -152,6 +159,13 @@ namespace SINGLE_STAGE
             this.Close();
         }
 
+        private void BackButtonClicked(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = new();
+            main.Show();
+            this.Close();
+        }
+
         private void DG01SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ButtonsInManageMode();
@@ -159,6 +173,9 @@ namespace SINGLE_STAGE
 
         private void ButtonsInManageMode()
         {
+            BACKButton.Visibility = Visibility.Hidden;
+            CANCButton.Visibility = Visibility.Visible;
+
             CREAButton.IsEnabled = false;
             EDITButton.IsEnabled = true;
             SAVEButton.IsEnabled = false;
@@ -167,6 +184,9 @@ namespace SINGLE_STAGE
 
         private void ButtonsInEditMode()
         {
+            BACKButton.Visibility = Visibility.Hidden;
+            CANCButton.Visibility = Visibility.Visible;
+
             CREAButton.IsEnabled = false;
             EDITButton.IsEnabled = false;
             SAVEButton.IsEnabled = true;
