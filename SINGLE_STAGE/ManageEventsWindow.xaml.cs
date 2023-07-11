@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SINGLE_STAGE.Entities;
+using SINGLE_STAGE.CRUD_logic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -198,16 +199,12 @@ namespace SINGLE_STAGE
                 return;
             }
 
-            MainWindow main = new();
-            main.Show();
-            this.Close();
+            CRUDWindowWPF.ReturnToMainWindowAndClose(this);
         }
 
         private void BackButtonClicked(object sender, RoutedEventArgs e)
         {
-            MainWindow main = new();
-            main.Show();
-            this.Close();
+            CRUDWindowWPF.ReturnToMainWindowAndClose(this);
         }
 
         private void DG01SelectionChanged(object sender, SelectionChangedEventArgs e)
