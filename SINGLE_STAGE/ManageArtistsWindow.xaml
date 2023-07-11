@@ -28,6 +28,7 @@
             Select an artist to manage or click "Create Artist".
         </Label>
 
+        <Button      Grid.Row="0" Grid.Column="3" Name="BACKButton" Click="BackButtonClicked" Content="Back"/>
         <Button      Grid.Row="0" Grid.Column="3" Name="CANCButton" Click="CancelButtonClicked" Content="Cancel"/>
 
 
