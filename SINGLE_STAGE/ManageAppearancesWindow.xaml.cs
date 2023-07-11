@@ -1,4 +1,5 @@
-﻿using SINGLE_STAGE.Entities;
+﻿using SINGLE_STAGE.CRUD_logic;
+using SINGLE_STAGE.Entities;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace SINGLE_STAGE
     /// </summary>
     public partial class ManageAppearancesWindow : Window, INotifyPropertyChanged
     {
+        #region Class Members
+
         readonly SingleStageContext _context;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -94,6 +97,7 @@ namespace SINGLE_STAGE
             }
         }
 
+        #endregion
 
         public ManageAppearancesWindow()
         {
@@ -163,6 +167,9 @@ namespace SINGLE_STAGE
             DG01.UnselectAll();
             DG01.IsEnabled = true;
 
+            BACKButton.Visibility = Visibility.Visible;
+            CANCButton.Visibility = Visibility.Hidden;
+
             CREAButton.IsEnabled = true;
             EDITButton.IsEnabled = false;
             SAVEButton.IsEnabled = false;
@@ -179,9 +186,12 @@ namespace SINGLE_STAGE
                 return;
             }
 
-            MainWindow main = new();
-            main.Show();
-            this.Close();
+            CRUDWindowWPF.ReturnToMainWindowAndClose(this);
+        }
+
+        private void BackButtonClicked(object sender, RoutedEventArgs e)
+        {
+            CRUDWindowWPF.ReturnToMainWindowAndClose(this);
         }
 
         private void DG01SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -191,10 +201,26 @@ namespace SINGLE_STAGE
 
         private void ButtonsInManageMode()
         {
+            BACKButton.Visibility = Visibility.Hidden;
+            CANCButton.Visibility = Visibility.Visible;
+
             CREAButton.IsEnabled = false;
             EDITButton.IsEnabled = true;
             SAVEButton.IsEnabled = false;
             DELEButton.IsEnabled = true;
+        }
+
+        private void ButtonsInEditMode()
+        {
+            BACKButton.Visibility = Visibility.Hidden;
+            CANCButton.Visibility = Visibility.Visible;
+
+            CREAButton.IsEnabled = false;
+            EDITButton.IsEnabled = false;
+            SAVEButton.IsEnabled = true;
+            DELEButton.IsEnabled = false;
+
+            DG01.IsEnabled = false;
         }
 
         private void CREAButtonClicked(object sender, RoutedEventArgs e)
@@ -207,16 +233,6 @@ namespace SINGLE_STAGE
             // set user inputs fields which are not bound to the temp Appearance
             CB01.SelectedItem = null;
             CB02.SelectedItem = null;
-        }
-
-        private void ButtonsInEditMode()
-        {
-            CREAButton.IsEnabled = false;
-            EDITButton.IsEnabled = false;
-            SAVEButton.IsEnabled = true;
-            DELEButton.IsEnabled = false;
-
-            DG01.IsEnabled = false;
         }
 
         private void EDITButtonClicked(object sender, RoutedEventArgs e)

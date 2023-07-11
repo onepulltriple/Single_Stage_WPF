@@ -28,6 +28,7 @@
             Select an appearance to manage or click "Create Appearance".
         </Label>
 
+        <Button      Grid.Row="0" Grid.Column="3" Name="BACKButton" Click="BackButtonClicked" Content="Back"/>
         <Button      Grid.Row="0" Grid.Column="3" Name="CANCButton" Click="CancelButtonClicked" Content="Cancel"/>
 
 
